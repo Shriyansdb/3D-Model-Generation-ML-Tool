@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Generator | AI-Powered Text to 3D</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--success);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--success), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #c1c1ff;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            color: var(--dark);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .preview-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .preview-placeholder {
+            background: linear-gradient(145deg, #e0e0e0, #f5f5f5);
+            border-radius: 10px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 2px dashed var(--gray);
+        }
+        
+        .preview-placeholder i {
+            font-size: 4rem;
+            color: var(--gray);
+        }
+        
+        .preview-placeholder p {
+            color: var(--gray);
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .preview-img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            max-height: 300px;
+            object-fit: contain;
+            background: white;
+            display: none;
+        }
+        
+        .download-section {
+            display: none;
+            margin-top: 20px;
+            background: #f0f5ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .download-title {
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--success);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-btn.obj {
+            background: var(--secondary);
+        }
+        
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .example-card {
+            background: #f0f5ff;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .example-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .example-card p {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .status-card {
+            grid-column: span 2;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .status-card {
+                grid-column: span 1;
+            }
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .status-item {
+            background: #f0f5ff;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .status-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .status-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(76, 201, 240, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--success);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            display: none;
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #a0a0d0;
+            font-size: 0.9rem;
+        }
+        
+        .preview-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .view-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .active-view {
+            background: var(--accent);
+        }
+        
+        .model-viewer {
+            width: 100%;
+            height: 300px;
+            background: #f0f5ff;
+            border-radius: 10px;
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .file-info {
+            background: #f0f5ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        .file-info p {
+            margin: 5px 0;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+    </style>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-cube"></i>
+                <h1>3D Model Generator</h1>
+            </div>
+            <p class="subtitle">Transform text descriptions into game-ready 3D assets using AI. Generate OBJ or GLB files with a single click.</p>
+        </header>
+        
+        <div class="content">
+            <!-- Generation Card -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-magic"></i> Create 3D Model</h2>
+                
+                <div class="form-group">
+                    <label for="prompt">Describe your 3D model</label>
+                    <input type="text" id="prompt" placeholder="e.g. 'A stone elephant statue', 'A futuristic spaceship', 'A chair shaped like an avocado'">
+                </div>
+                
+                <div class="form-group">
+                    <label for="format">Output Format</label>
+                    <select id="format">
+                        <option value="glb">GLB (Recommended for Game Engines)</option>
+                        <option value="obj">OBJ (Compatible with most software)</option>
+                    </select>
+                </div>
+                
+                <button id="generate-btn" class="btn">
+                    <i class="fas fa-cogs"></i> Generate 3D Model
+                </button>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Generating your 3D model. This may take 1-3 minutes...</p>
+                </div>
+                
+                <div class="error-message" id="error-message"></div>
+                
+                <div class="preview-container">
+                    <div class="preview-placeholder" id="preview-placeholder">
+                        <div>
+                            <i class="fas fa-image"></i>
+                            <p>Your preview will appear here</p>
+                        </div>
+                    </div>
+                    <img id="preview-img" class="preview-img" alt="3D Model Preview">
+                    
+                    <model-viewer 
+                        id="model-viewer"
+                        class="model-viewer"
+                        alt="3D Model" 
+                        src=""
+                        ar
+                        ar-modes="scene-viewer webxr quick-look"
+                        environment-image="neutral"
+                        shadow-intensity="1"
+                        camera-controls
+                        auto-rotate>
+                    </model-viewer>
+                    
+                    <div class="preview-controls" id="preview-controls" style="display: none;">
+                        <button class="view-btn" id="view-2d">2D Preview</button>
+                        <button class="view-btn" id="view-3d">3D View</button>
+                    </div>
+                    
+                    <div class="download-section" id="download-section">
+                        <h3 class="download-title">Your 3D Model is Ready!</h3>
+                        <div>
+                            <a id="download-glb" class="download-btn" download>
+                                <i class="fas fa-download"></i> Download GLB
+                            </a>
+                            <a id="download-obj" class="download-btn obj" download>
+                                <i class="fas fa-download"></i> Download OBJ
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="file-info" id="file-info">
+                        <p><i class="fas fa-info-circle"></i> After downloading, you can:</p>
+                        <p>- Import into Unity/Unreal Engine</p>
+                        <p>- View in Windows 3D Viewer</p>
+                        <p>- Edit in Blender or Maya</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Examples Card -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-lightbulb"></i> Example Prompts</h2>
+                <p>Try these examples to get started:</p>
+                
+                <div class="examples">
+                    <div class="example-card" data-prompt="A detailed stone elephant statue">
+                        <img src="https://images.unsplash.com/photo-1564349683136-77e08dba27e8?auto=format&fit=crop&w=400" alt="Elephant">
+                        <p>Stone Elephant</p>
+                    </div>
+                    
+                    <div class="example-card" data-prompt="A futuristic spaceship with laser cannons">
+                        <img src="https://images.unsplash.com/photo-1535269778701-12a9d57b3d0d?auto=format&fit=crop&w=400" alt="Spaceship">
+                        <p>Spaceship</p>
+                    </div>
+                    
+                    <div class="example-card" data-prompt="A chair shaped like an avocado">
+                        <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=400" alt="Avocado Chair">
+                        <p>Avocado Chair</p>
+                    </div>
+                    
+                    <div class="example-card" data-prompt="A medieval castle with towers">
+                        <img src="https://images.unsplash.com/photo-1589652717521-10c0d092dea9?auto=format&fit=crop&w=400" alt="Castle">
+                        <p>Medieval Castle</p>
+                    </div>
+                    
+                    <div class="example-card" data-prompt="A realistic human skull">
+                        <img src="https://images.unsplash.com/photo-1584269600518-42e15746f281?auto=format&fit=crop&w=400" alt="Skull">
+                        <p>Human Skull</p>
+                    </div>
+                    
+                    <div class="example-card" data-prompt="A sports car with aerodynamic design">
+                        <img src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=400" alt="Sports Car">
+                        <p>Sports Car</p>
+                    </div>
+                </div>
+                
+                <h2 class="card-title" style="margin-top: 30px;"><i class="fas fa-info-circle"></i> How It Works</h2>
+                <ol style="padding-left: 20px; color: var(--dark); line-height: 2;">
+                    <li>Enter a text description of the 3D model you want</li>
+                    <li>Select your preferred output format (GLB recommended)</li>
+                    <li>Click "Generate 3D Model" and wait 1-3 minutes</li>
+                    <li>Download the generated 3D asset and use it in your game engine</li>
+                </ol>
+            </div>
+            
+            <!-- Status Card -->
+            <div class="card status-card">
+                <h2 class="card-title"><i class="fas fa-server"></i> System Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">Model Status</div>
+                        <div class="status-value" id="model-status">Operational</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Active Model</div>
+                        <div class="status-value" id="active-model">Shap-E-text300M</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Storage Usage</div>
+                        <div class="status-value" id="storage-usage">0.00 MB</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Generated Assets</div>
+                        <div class="status-value" id="asset-count">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>3D Model Generator v1.0 | Powered by Shap-E AI Model | Designed for Game Development</p>
+            <p>Note: Generation may take 1-3 minutes on CPU. For faster results, use a GPU-enabled server.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const generateBtn = document.getElementById('generate-btn');
+            const promptInput = document.getElementById('prompt');
+            const formatSelect = document.getElementById('format');
+            const previewImg = document.getElementById('preview-img');
+            const previewPlaceholder = document.getElementById('preview-placeholder');
+            const previewControls = document.getElementById('preview-controls');
+            const downloadSection = document.getElementById('download-section');
+            const downloadGlb = document.getElementById('download-glb');
+            const downloadObj = document.getElementById('download-obj');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('error-message');
+            const modelViewer = document.getElementById('model-viewer');
+            const fileInfo = document.getElementById('file-info');
+            const view2d = document.getElementById('view-2d');
+            const view3d = document.getElementById('view-3d');
+            
+            // Example prompts
+            const exampleCards = document.querySelectorAll('.example-card');
+            
+            // Status elements
+            const modelStatus = document.getElementById('model-status');
+            const activeModel = document.getElementById('active-model');
+            const storageUsage = document.getElementById('storage-usage');
+            const assetCount = document.getElementById('asset-count');
+            
+            // Current model state
+            let currentModelUrl = '';
+            let currentPrompt = '';
+            
+            // Set up example prompts
+            exampleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const prompt = card.getAttribute('data-prompt');
+                    promptInput.value = prompt;
+                    
+                    // Animate the card to show selection
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 200);
+                });
+            });
+            
+            // Set up view controls
+            view2d.addEventListener('click', () => {
+                modelViewer.style.display = 'none';
+                previewImg.style.display = 'block';
+                view2d.classList.add('active-view');
+                view3d.classList.remove('active-view');
+            });
+            
+            view3d.addEventListener('click', () => {
+                if (!currentModelUrl) return;
+                
+                previewImg.style.display = 'none';
+                modelViewer.style.display = 'block';
+                view3d.classList.add('active-view');
+                view2d.classList.remove('active-view');
+            });
+            
+            // Generate button click handler
+            generateBtn.addEventListener('click', async () => {
+                const prompt = promptInput.value.trim();
+                const format = formatSelect.value;
+                
+                if (!prompt) {
+                    showError('Please enter a description for your 3D model');
+                    return;
+                }
+                
+                // Reset UI
+                hideError();
+                previewPlaceholder.style.display = 'none';
+                previewImg.style.display = 'none';
+                modelViewer.style.display = 'none';
+                previewControls.style.display = 'none';
+                downloadSection.style.display = 'none';
+                fileInfo.style.display = 'none';
+                loading.style.display = 'block';
+                
+                try {
+                    // Step 1: Generate the 3D model
+                    const response = await fetch(`/generate3d?prompt=${encodeURIComponent(prompt)}&format=${format}`);
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Generation failed');
+                    }
+                    
+                    // Get the blob for download
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    
+                    // Update model viewer
+                    if (format === 'glb') {
+                        modelViewer.src = url;
+                        currentModelUrl = url;
+                    }
+                    
+                    // Create download URL
+                    const downloadUrl = url;
+                    const fileExt = format === 'obj' ? 'obj' : 'glb';
+                    const fileName = `${prompt.substring(0, 20)}_${Date.now()}.${fileExt}`;
+                    
+                    // Set download links
+                    downloadGlb.href = `/generate3d?prompt=${encodeURIComponent(prompt)}&format=glb`;
+                    downloadGlb.download = `${prompt.substring(0, 20)}.glb`;
+                    downloadObj.href = `/generate3d?prompt=${encodeURIComponent(prompt)}&format=obj`;
+                    downloadObj.download = `${prompt.substring(0, 20)}.obj`;
+                    
+                    // Step 2: Get preview
+                    try {
+                        const previewResponse = await fetch(`/preview?prompt=${encodeURIComponent(prompt)}`);
+                        if (previewResponse.ok) {
+                            const previewBlob = await previewResponse.blob();
+                            const previewUrl = URL.createObjectURL(previewBlob);
+                            previewImg.src = previewUrl;
+                            previewImg.style.display = 'block';
+                        }
+                    } catch (previewError) {
+                        console.warn('Preview loading failed:', previewError);
+                    }
+                    
+                    // Show UI elements
+                    previewControls.style.display = 'flex';
+                    downloadSection.style.display = 'block';
+                    fileInfo.style.display = 'block';
+                    view2d.classList.add('active-view');
+                    
+                    // Store current prompt for later use
+                    currentPrompt = prompt;
+                    
+                    // Update status
+                    updateStatus();
+                    
+                } catch (e) {
+                    showError(`Error: ${e.message}`);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            });
+            
+            // Error handling functions
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                
+                // Auto-hide after 5 seconds
+                setTimeout(hideError, 5000);
+            }
+            
+            function hideError() {
+                errorMessage.style.display = 'none';
+            }
+            
+            // Update system status
+            async function updateStatus() {
+                try {
+                    const response = await fetch('/status');
+                    const data = await response.json();
+                    
+                    modelStatus.textContent = data.status;
+                    activeModel.textContent = data.model;
+                    storageUsage.textContent = data.storage_usage;
+                    
+                    // Simulate asset count based on storage usage
+                    const mb = parseFloat(data.storage_usage.split(' ')[0]);
+                    assetCount.textContent = Math.floor(mb / 2.5); // ~2.5MB per model
+                } catch (e) {
+                    console.error('Failed to fetch status:', e);
+                }
+            }
+            
+            // Initial status update
+            updateStatus();
+        });
+    </script>
+</body>
+</html>

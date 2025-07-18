@@ -1,0 +1,10 @@
+flask
+torch
+shap-e @ git+https://github.com/openai/shap-e.git
+trimesh
+pygltflib
+numpy
+pillow
+pyyaml
+uuid
+gunicorn
